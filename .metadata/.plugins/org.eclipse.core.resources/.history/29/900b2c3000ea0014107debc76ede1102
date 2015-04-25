@@ -1,0 +1,29 @@
+package com.maximos.os;
+
+import javax.naming.TimeLimitExceededException;
+
+public class PlayWithTime {
+
+	public static void allAboutMainThread() {
+		System.out.println("Active threads" + Thread.activeCount());
+		System.out.println("thread name: " + Thread.currentThread().getName());
+
+	}
+
+	public static void allAboutThreadGroup() {
+
+	}
+
+	public static void main(String args[]) {
+		// System.out.println("Thread :" + Thread.);
+		allAboutMainThread();
+
+		long startTime = System.currentTimeMillis();
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		long elaspedTime = System.currentTimeMillis() - startTime; 
+	}
+}

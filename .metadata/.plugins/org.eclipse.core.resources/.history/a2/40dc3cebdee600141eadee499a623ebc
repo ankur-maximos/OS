@@ -1,0 +1,11 @@
+package com.maximos.os;
+
+public class Order {
+
+	private int arrivalTime;
+	private int numBurgers;
+	private int numFries;
+	private boolean coke;
+	
+	
+}

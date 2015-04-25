@@ -1,0 +1,477 @@
+package com.maximos.os;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicIntegerArray;
+
+/**
+ * Main class containing
+ * 
+ * @author maximos
+ *
+ */
+public class Dining {
+
+	static int STOPPING_TIME = 1;
+	static int TIME_CONVERTER = 1000;
+	static long globalTimeClock = 0;
+	static int numTables;
+	static int numCooks;
+	static String COOK_THREAD_GROUP = "cooks";
+	static String ORDER_THREAD_GROUP = "order";
+
+	static List<Order> orders = new ArrayList<Order>();
+	static List<Cook> cookList = new ArrayList<Cook>();
+	static Object cooks = new Object();
+	static Object tables = new Object();
+	static Object cookCounter = new Object();
+	static Object waitForCook = new Object();
+	CyclicBarrier barrier;
+	CyclicBarrier cookBarrier;
+	static boolean restaurantClosed = false;
+
+	// shared resources
+	static AtomicInteger currentTables;
+	static AtomicInteger currentCooks;
+	static AtomicBoolean friesMachineBusy;
+	static AtomicBoolean burgerMachineBusy;
+	static AtomicBoolean cokeMachineBusy;
+	static AtomicIntegerArray tablesInfo;
+	static AtomicInteger customerServed;
+
+	static public void printOrders(Order order, int id) {
+		System.out.println("Customer " + id + "report");
+		System.out.println("Arrival time " + order.getArrivalTime());
+		System.out.println("Seating time " + order.getSeatedTime());
+		System.out.println("Cook Serve time " + order.getCookServeTime());
+		System.out.println("Food Serve time " + order.getFoodServeTime());
+		System.out.println("Exit time " + order.getExitTime());
+		System.out
+				.println("Cook id time " + order.getServingCook().getCookId());
+		System.out.println("Table Number " + order.getSeatedTable());
+	}
+
+	static void updateGlobalClock() {
+		globalTimeClock = System.currentTimeMillis();
+	}
+
+	/*
+	 * This Class thread is for the order thread
+	 * 
+	 * So Here we basically keep track of each customer,Few basic functions
+	 * which are performed here are, 1.Users enters the restaurant and look for
+	 * table, 2.User then look for a cook, 3.After getting cook assigned, it
+	 * waits for food, 4. After getting food, he take around 30 min to finish
+	 * the food and vacate the table for a new Customer
+	 */
+	class OrderThread extends Thread {
+		private Order order;
+		private ThreadGroup tg;
+		private CountDownLatch latch;
+		private long localTime;
+
+		public OrderThread(Order order, ThreadGroup tg, CountDownLatch latch,
+				long localTime) {
+			this.order = order;
+			this.tg = tg;
+			this.latch = latch;
+			this.localTime = localTime;
+		}
+
+		public void updateLocalTime() {
+			localTime = System.currentTimeMillis();
+		}
+
+		public long getLocaltime() {
+			return localTime;
+		}
+
+		@Override
+		public void run() {
+			System.out.println("Current tables " + currentTables.get());
+			localTime = System.currentTimeMillis();
+			if (currentTables.get() > 0 && currentTables.getAndDecrement() > 0) {
+				long seatedTime = System.currentTimeMillis() - localTime;
+				updateLocalTime();
+				order.setSeatedTable(getEmptyTable());
+				order.setSeatedTime(order.getArrivalTime() + (int) seatedTime
+						/ TIME_CONVERTER);
+				System.out.println("User " + order.getOrderid()
+						+ " seated on table " + order.getSeatedTable()
+						+ " at time " + order.getSeatedTime());
+
+				/*
+				 * After getting a seat, user will look for a cook
+				 * 
+				 * If cook is available then well and good else the user will
+				 * have to wait for the cook to be available.
+				 */
+				if (currentCooks.get() > 0
+						&& currentCooks.getAndDecrement() > 0) {
+					Cook cook = assignCook(tg, order, latch);
+					if (cook != null) {
+						order.setServingCook(cook);
+					} else {
+						try {
+							cooks.wait();
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+					try {
+						Thread.sleep(30000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					long exitTime = System.currentTimeMillis() - localTime;
+					updateLocalTime();
+					order.setExitTime(order.getFoodServeTime() + (int) exitTime
+							/ TIME_CONVERTER);
+					System.out.println("Customer order id is: "
+							+ order.getOrderid() + " Order exit time is: "
+							+ order.getExitTime());
+					setEmptyTable(order.getSeatedTable());
+					currentTables.incrementAndGet();
+					synchronized (tables) {
+						tables.notifyAll();
+					}
+				} else {
+					if (currentCooks.get() < 0) {
+						currentCooks.getAndSet(0);
+					}
+					System.out.println("Customer " + order.getOrderid()
+							+ " stuck for cook");
+					synchronized (cooks) {
+						try {
+							cooks.wait();
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			} else {
+				if (currentTables.get() < 0) {
+					currentTables.getAndSet(0);
+				}
+				System.out.println("Customer " + order.getOrderid()
+						+ " stuck for tables");
+				synchronized (tables) {
+					try {
+						tables.wait();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
+
+	class CookThread extends Thread {
+
+		private Order order;
+		private Cook cook;
+		private CountDownLatch latch;
+
+		// constructor
+		public CookThread(ThreadGroup threadGroup, int cookId) {
+			super(threadGroup, "cook" + cookId);
+			cook = new Cook(cookId);
+			this.cook.setCookId(cookId);
+			this.cook.setBusy(false);
+		}
+
+		public Order getOrder() {
+			return order;
+		}
+
+		public void setOrder(Order order) {
+			this.order = order;
+		}
+
+		public Cook getCook() {
+			return cook;
+		}
+
+		public void setCook(Cook cook) {
+			this.cook = cook;
+		}
+
+		public void setLatch(CountDownLatch latch) {
+			this.latch = latch;
+		}
+
+		@Override
+		public void run() {
+			System.out.println(Thread.currentThread().getName() + " is ready");
+			while (restaurantClosed != true) {
+				while (this.cook.busy.get() == false)
+					;
+				/*
+				 * Cook got his order which he will start to process
+				 * 
+				 * -- Work: Basically responsible for computation of the
+				 * Customer Timing
+				 */
+				System.out.println(this.getName()
+						+ " started processing order " + order.getOrderid());
+				// cook.initializeCookForOrder();
+				long startTime = System.currentTimeMillis();
+				while (true) {
+					if (order.getNumFries() > 0
+							&& friesMachineBusy.compareAndSet(false, true)) {
+						System.out.println("Cooking fries"
+								+ order.getNumFries());
+						while (order.getNumFries() > 0) {
+							try {
+								Thread.sleep(3 * TIME_CONVERTER);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+							order.setNumFries(order.getNumFries() - 1);
+						}
+						friesMachineBusy.set(false);
+					} else if (order.getNumBurgers() > 0
+							&& burgerMachineBusy.compareAndSet(false, true)) {
+						System.out.println("Cooking burger"
+								+ order.getNumBurgers());
+						while (order.getNumBurgers() > 0) {
+							try {
+								Thread.sleep(5 * TIME_CONVERTER);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+							order.setNumBurgers(order.getNumBurgers() - 1);
+						}
+						burgerMachineBusy.set(false);
+					} else if (order.isCoke()
+							&& cokeMachineBusy.compareAndSet(false, true)) {
+						System.out.println("Cooking coke" + order.isCoke());
+						try {
+							Thread.sleep(1 * TIME_CONVERTER);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						order.setCoke(false);
+						cokeMachineBusy.set(false);
+					} else if (!order.isCoke() && order.getNumBurgers() == 0
+							&& order.getNumFries() == 0) {
+						long elaspedTime = System.currentTimeMillis()
+								- startTime;
+						System.out.println("Time taken for preparing Order :"
+								+ order.getOrderid() + "is" + (int) elaspedTime
+								/ TIME_CONVERTER);
+						order.setFoodServeTime(order.getCookServeTime()
+								+ (int) elaspedTime / TIME_CONVERTER);
+						latch.countDown();
+						cook.busy.compareAndSet(true, false);
+						currentCooks.incrementAndGet();
+						synchronized (cooks) {
+							cooks.notifyAll();
+						}
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	public static Thread[] getGroupThreads(final ThreadGroup group) {
+		if (group == null)
+			throw new NullPointerException("Null group");
+		int nAlloc = group.activeCount();
+		int n = 0;
+		Thread[] threads = null;
+		do {
+			nAlloc *= 2;
+			threads = new Thread[nAlloc];
+			n = group.enumerate(threads, false);
+		} while (n == nAlloc);
+		return java.util.Arrays.copyOf(threads, n);
+	}
+
+	/**
+	 * returns any spare cook
+	 * 
+	 * @return cook id
+	 */
+	public static int spareCook() {
+		int id = -1;
+		for (Cook cook : cookList) {
+			if (!cook.isBusy()) {
+				return cook.getCookId();
+			}
+		}
+		return id;
+	}
+
+	/**
+	 * This method gets cook for the user
+	 * 
+	 * It performs below operations
+	 * 
+	 * a.fetch the idle cook b.assigns the cook to the order c.updates the cook
+	 * status d.updates the global cook count e.updates the cook serve time for
+	 * the order f.initialize the cook for the new order
+	 * 
+	 * @param tg
+	 * @param order
+	 * @return
+	 */
+	public static Cook assignCook(ThreadGroup tg, Order order,
+			CountDownLatch latch) {
+		Thread cooks[] = getGroupThreads(tg);
+		for (int ii = 0; ii < cooks.length; ii++) {
+			CookThread cook = (CookThread) cooks[ii];
+			if (cook.getCook().busy.get() == false) {
+				cook.setOrder(order);
+				cook.setLatch(latch);
+			}
+			if (cook.getCook().busy.compareAndSet(false, true)) {
+				System.out.println("Assigning cook " + cook.getName()
+						+ " for order " + order.getOrderid());
+				cook.setOrder(order);
+				cook.setLatch(latch);
+				long cookTime = System.currentTimeMillis()
+						- ((OrderThread) Thread.currentThread()).getLocaltime();
+				((OrderThread) Thread.currentThread()).getLocaltime();
+				/*
+				 * if (order.getSeatedTime() >
+				 * cook.getCook().getFoodServeTime()) {
+				 * order.setCookServeTime(order.getSeatedTime());
+				 * cook.getCook().setStartServeTime(order.getSeatedTime()); }
+				 * else {
+				 * order.setCookServeTime(cook.getCook().getFoodServeTime());
+				 * cook.getCook().setStartServeTime(
+				 * cook.getCook().getFoodServeTime()); }
+				 */
+				order.setCookServeTime(order.getSeatedTime() + (int) cookTime
+						/ TIME_CONVERTER);
+				try {
+					latch.await();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				// long foodServeTime = System.currentTimeMillis()-
+				// ((OrderThread) Thread.currentThread()).getLocaltime();
+				((OrderThread) Thread.currentThread()).updateLocalTime();
+				// order.setFoodServeTime((int) foodServeTime / TIME_CONVERTER
+				// + order.getCookServeTime());
+				return cook.getCook();
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * This method returns the empty table, if there is no empty table it
+	 * returns -1
+	 * 
+	 * @return table number
+	 */
+	public static int getEmptyTable() {
+		int num = -1;
+		for (int ii = 0; ii < tablesInfo.length(); ii++) {
+			if (tablesInfo.get(ii) == 0 && tablesInfo.getAndIncrement(ii) == 0) {
+				return ii;
+			}
+		}
+		return num;
+	}
+
+	public static void setEmptyTable(int table) {
+		tablesInfo.getAndIncrement(table);
+	}
+
+	public static void main(String args[]) {
+
+		int numDiners;
+		Scanner sc = new Scanner(System.in);
+
+		/*
+		 * Initializing the restaurant
+		 * 
+		 * TablesCount, Machines availability, making Cooks ready for servicing
+		 */
+
+		// initializing diners
+		numDiners = Integer.parseInt(sc.nextLine().trim());
+
+		// initializing tables and cooks
+		numTables = Integer.parseInt(sc.nextLine().trim());
+		currentTables = new AtomicInteger(numTables);
+		numCooks = Integer.parseInt(sc.nextLine().trim());
+		currentCooks = new AtomicInteger(numCooks);
+
+		// initializing tables Info and customer served
+		tablesInfo = new AtomicIntegerArray(numTables);
+		customerServed = new AtomicInteger();
+
+		// initializing machines status
+		friesMachineBusy = new AtomicBoolean(false);
+		burgerMachineBusy = new AtomicBoolean(false);
+		cokeMachineBusy = new AtomicBoolean(false);
+
+		// starting main class
+		Dining dine = new Dining();
+
+		// initializing thread group for the cooks
+		ThreadGroup tg = new ThreadGroup(COOK_THREAD_GROUP);
+
+		// Starting Cook threads
+		System.out.println("Intializing Cooks..");
+		for (int ii = 0; ii < numCooks; ii++) {
+			CookThread cook = dine.new CookThread(tg, (ii + 1));
+			cook.start();
+		}
+
+		/*
+		 * Now processing each order and creating threads for it
+		 * 
+		 * if tables are available then well and good, else order will have to
+		 * wait
+		 */
+		Order order;
+		int sleepingTime = 0
+		long startRestaurant = System.currentTimeMillis();
+		globalTimeClock = startRestaurant;
+		int latestCustomerTime = 0;
+		for (int ii = 0; ii < numDiners; ii++) {
+			String str[] = sc.nextLine().split(" +");
+			order = new Order();
+			order.setOrderid((ii + 1));
+			order.setArrivalTime(Integer.parseInt(str[0].trim()));
+			order.setNumBurgers(Integer.parseInt(str[1].trim()));
+			order.setNumFries(Integer.parseInt(str[2].trim()));
+			if (Integer.parseInt(str[3]) == 0) {
+				order.setCoke(false);
+			} else {
+				order.setCoke(true);
+			}
+			latestCustomerTime = order.getArrivalTime() - latestCustomerTime;
+			System.out.println("Customer: " + order.getOrderid()
+					+ " sleeping for" + latestCustomerTime);
+			try {
+				Thread.sleep(latestCustomerTime * TIME_CONVERTER);
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
+			updateGlobalClock();
+			OrderThread customer = dine.new OrderThread(order, tg,
+					new CountDownLatch(1), globalTimeClock);
+			customer.start();
+		}
+
+		while (customerServed.get() < numDiners)
+			;
+		long closeRestaurant = System.currentTimeMillis();
+		System.out.println("Restaurant Running time :"
+				+ (closeRestaurant - startRestaurant));
+		sc.close();
+	}
+}

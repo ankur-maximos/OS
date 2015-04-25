@@ -1,0 +1,87 @@
+10 
+4 
+2 
+20  2 1 0 
+30  4  0 1 
+31  2 1 0 
+32  2 1 0 
+33  2  0  1 
+60  2 1 0 
+70  4 0 1 
+71  2 1 0 
+72  2 2 0 
+73  2 0 1 Intializing Cooks..
+cook1 is ready
+cook2 is ready
+Current tables 4
+User 1 seated on table 0 at time 20
+Assigning cook cook1 for order 1
+cook1 started processing order 1
+Cooking fries1
+Cooking burger2
+Current tables 3
+User 2 seated on table 1 at time 30
+Assigning cook cook2 for order 2
+cook2 started processing order 2
+Cooking coketrue
+Time taken for preparing Order :1is13
+Cooking burger4
+Current tables 3
+User 3 seated on table 2 at time 31
+Assigning cook cook1 for order 3
+cook1 started processing order 3
+Cooking fries1
+Time taken for preparing Order :2is23
+Cooking burger2
+Current tables 3
+User 4 seated on table 3 at time 32
+Assigning cook cook2 for order 4
+cook2 started processing order 4
+Cooking fries1
+Customer order id is: 1 Order exit time is: 63
+Time taken for preparing Order :3is13
+Cooking burger2
+Time taken for preparing Order :4is13
+Customer order id is: 2 Order exit time is: 83
+Current tables 4
+User 5 seated on table -1 at time 33
+Assigning cook cook1 for order 5
+cook1 started processing order 5
+Cooking burger2
+Customer order id is: 3 Order exit time is: 74
+Cooking coketrue
+Time taken for preparing Order :5is11
+Customer order id is: 4 Order exit time is: 75
+Current tables 4
+User 6 seated on table -1 at time 60
+Assigning cook cook1 for order 6
+cook1 started processing order 6
+Cooking fries1
+Cooking burger2
+Customer order id is: 5 Order exit time is: 74
+Time taken for preparing Order :6is13
+Current tables 4
+User 7 seated on table -1 at time 70
+Assigning cook cook1 for order 7
+cook1 started processing order 7
+Cooking burger4
+Customer order id is: 6 Order exit time is: 103
+Cooking coketrue
+Time taken for preparing Order :7is21
+Current tables 4
+User 8 seated on table -1 at time 71
+Assigning cook cook1 for order 8
+cook1 started processing order 8
+Cooking fries1
+Cooking burger2
+Customer order id is: 7 Order exit time is: 121
+Time taken for preparing Order :8is13
+Current tables 4
+User 9 seated on table -1 at time 72
+Assigning cook cook1 for order 9
+cook1 started processing order 9
+Cooking fries2
+Cooking burger2
+Customer order id is: 8 Order exit time is: 114
+Time taken for preparing Order :9is16
+Customer order id is: 9 Order exit time is: 118

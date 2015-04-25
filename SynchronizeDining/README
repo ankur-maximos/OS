@@ -1,0 +1,15 @@
+Instructions for running the project:
+
+1.Open Eclipse.
+2.Import project into Eclipse.
+3.In the File chooser, select SynchronizeDining project.
+4.Open the Dining.java class.
+5.Dining.java contains our main method.
+6.Run this java file in eclipse.
+
+
+Files contained inside unzipped folder
+1.Project with name “SynchronizeDining”.
+2.Results-DataSet *.pdf -> for showing results after execution.
+3.result -> raw result after execution of the code.
+4.DESIGN -> explains few design aspects of the application.

@@ -1,0 +1,214 @@
+package com.maximos.os;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
+
+import javax.swing.plaf.SliderUI;
+
+/**
+ * Main class containing
+ * 
+ * @author maximos
+ *
+ */
+public class Dining {
+
+	static int TOT_RESTAURANT_TIME = 5;
+	static int STOPPING_TIME = 1;
+	static int globalTime = 0;
+	static int numTables;
+	static int numCooks;
+	static int currentTables;
+	static int currentCooks;
+	static List<Order> orders = new ArrayList<Order>();
+	static List<Cook> cookList = new ArrayList<Cook>();
+	static Object cooks = new Object();
+	static Object tables = new Object();
+	static Object cookCounter = new Object();
+	CyclicBarrier barrier;
+	CyclicBarrier cookBarrier;
+	static boolean restaurantClosed = false;
+
+	public void printOrders() {
+
+	}
+
+	class OrderThread extends Thread {
+		Order order;
+
+		public OrderThread(Order order) {
+			this.order = order;
+		}
+
+		@Override
+		public void run() {
+
+			/*
+			 * if (numTables > 0 && numCooks > 0) {
+			 * 
+			 * } else if (numTables > 0 && !(numCooks > 0)) {
+			 * 
+			 * } else if (!(numTables > 0) && (numCooks > 0)) {
+			 * 
+			 * } else { try { System.out.println(""); obj.wait(); } catch
+			 * (InterruptedException e) { e.printStackTrace(); } }
+			 */
+		}
+	}
+
+	class CookThread implements Runnable {
+
+		boolean friesMachine = true;
+		boolean burgerMachine = true;
+		boolean cokeMachine = true;
+
+		@Override
+		public void run() {
+			System.out.println(Thread.currentThread().getName() + " is ready");
+			while (restaurantClosed != true) {
+
+			}
+		}
+	}
+
+	class ExitDiner implements Runnable {
+
+		@Override
+		public void run() {
+			try {
+				if (barrier.await() == 0) {
+					OrderThread thread = (OrderThread) Thread.currentThread();
+					System.out.println("Exiting user :"
+							+ thread.order.getArrivalTime());
+					orders.add(thread.order);
+					globalTime = thread.order.getExitTime();
+					synchronized (tables) {
+						tables.notifyAll();
+					}
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (BrokenBarrierException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public static void runningMainThread() {
+
+	}
+
+	class MyTimerTask extends TimerTask {
+
+		@Override
+		public void run() {
+
+		}
+	}
+
+	/**
+	 * returns any spare cook
+	 * 
+	 * @return cook id
+	 */
+	public static int spareCook() {
+		int id = -1;
+		for (Cook cook : cookList) {
+			if (!cook.isBusy()) {
+				return cook.getCookId();
+			}
+		}
+		return id;
+	}
+
+	public static Cook getCook(int id) {
+		for (Cook cook : cookList) {
+			if (cook.getCookId() == id) {
+				return cook;
+			}
+		}
+		return null;
+	}
+
+	public static void main(String args[]) {
+
+		int numDiners;
+		Scanner sc = new Scanner(System.in);
+		numDiners = sc.nextInt();
+		currentTables = numTables = sc.nextInt();
+		currentCooks = numCooks = sc.nextInt();
+		Dining dine = new Dining();
+		// Starting Cook threads
+		CookThread rc = dine.new CookThread();
+		System.out.println("Intializing Cooks..");
+		for (int ii = 0; ii < numCooks; ii++) {
+			Thread cook1 = new Thread(rc, "Cook" + (ii + 1));
+			cookList.add(new Cook(ii + 1));
+			cook1.start();
+			synchronized (cookCounter) {
+				try {
+					cookCounter.wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		System.out.println("Intialized Cooks!");
+
+		dine.barrier = new CyclicBarrier(STOPPING_TIME, dine.new ExitDiner());
+
+		Order order;
+		for (int ii = 0; ii < numDiners; ii++) {
+			System.out.println("Taking " + (ii + 1) + " user");
+			String str[] = sc.nextLine().split(" *");
+			order = new Order();
+			order.setArrivalTime(Integer.parseInt(str[0]));
+			order.setNumBurgers(Integer.parseInt(str[1]));
+			order.setNumFries(Integer.parseInt(str[2]));
+			if (Integer.parseInt(str[3]) == 0) {
+				order.setCoke(false);
+			} else {
+				order.setCoke(true);
+			}
+			globalTime = order.getArrivalTime();
+			synchronized (tables) {
+				if (currentTables > 0) {
+					currentTables--;
+					order.setSeatedTable(numTables - currentTables);
+					order.setSeatedTable(globalTime);
+				} else {
+					try {
+						tables.wait();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+
+			synchronized (cooks) {
+				int cookId = spareCook();
+				if (currentCooks > 0) {
+					// Cook cook = getCook(cookId);
+					// order.setServingCook(cook);
+					synchronized (str) {
+					}
+				} else {
+					try {
+						cooks.wait();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+
+		// Creating TimerTask
+
+		sc.close();
+	}
+}

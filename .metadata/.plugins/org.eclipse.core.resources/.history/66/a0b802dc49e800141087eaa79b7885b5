@@ -1,0 +1,44 @@
+package com.maximos.os;
+
+/**
+ * Bean class to store values 
+ * for arrival customers
+ * 
+ * @author maximos
+ *
+ */
+public class Order {
+
+	private int arrivalTime;
+	private int numBurgers;
+	private int numFries;
+	private boolean coke;
+	//parameters to give as output
+	private
+	
+	
+	public int getArrivalTime() {
+		return arrivalTime;
+	}
+	public void setArrivalTime(int arrivalTime) {
+		this.arrivalTime = arrivalTime;
+	}
+	public int getNumBurgers() {
+		return numBurgers;
+	}
+	public void setNumBurgers(int numBurgers) {
+		this.numBurgers = numBurgers;
+	}
+	public int getNumFries() {
+		return numFries;
+	}
+	public void setNumFries(int numFries) {
+		this.numFries = numFries;
+	}
+	public boolean isCoke() {
+		return coke;
+	}
+	public void setCoke(boolean coke) {
+		this.coke = coke;
+	}
+}

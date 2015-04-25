@@ -1,0 +1,173 @@
+package maximos.os.allocateprinter;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
+public class AllocatePrinter {
+	//Considering array as data structure for processes and each number entry as its priority
+	//we can choose methods also for determining priority but that is not our purpose instead
+	//allocating resources to printer is out motive
+	
+	static int num_processes;
+	static List<Integer> processes = new ArrayList<Integer>();
+	static Object printer1 = new Object();
+	static Object printer2 = new Object();
+	static Object printer3 = new Object();
+	static Object lock = new Object();
+	
+	static int current_printing = 0;
+	static int waiting_list = 0;
+	static int tot_printed = 0;
+	
+	static void print_arraylist() {
+		System.out.println("Array list");
+		for(int i: processes) {
+			System.out.print(i + " ");
+		}
+	}
+	
+	class RunnablePrinter implements Runnable{
+		Map<Integer,Boolean> printer_busy = new HashMap<Integer, Boolean>();
+		
+		public RunnablePrinter() {
+			printer_busy.put(1, false);
+			printer_busy.put(2, false);
+			printer_busy.put(3, false);
+		}
+		
+		@Override
+		public void run() {
+			synchronized (lock) {
+				try {
+					
+					waiting_list++;
+					while(waiting_list!=num_processes) {
+						System.out.println("Waiting Thread " + Thread.currentThread().getPriority());
+						lock.wait();
+					}
+					System.out.println("Going out");
+					lock.notifyAll();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			System.out.println("Current Printing :" + current_printing + " passing thread :" + Thread.currentThread().getPriority());
+			while(current_printing>3) {
+				try {
+					synchronized (lock) {
+						lock.wait();
+					}
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			if(!printer_busy.get(1)) {
+				//Printing done by printer 1
+				synchronized (printer1) {
+					printer_busy.put(1, true);
+				}
+				synchronized (lock) {
+					current_printing++;
+				}
+				try {
+					//printing 
+					System.out.println("Job getting Printed at 1:" + Thread.currentThread().getPriority());
+					Thread.currentThread().sleep(5000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				synchronized (printer1) {
+					printer_busy.put(1, false);
+				}
+				synchronized (lock) {
+					current_printing--;
+					tot_printed++;
+					lock.notifyAll();
+				}
+				
+			} else if(!printer_busy.get(2)){
+				//Printing done by printer 2
+				synchronized (printer2) {
+					printer_busy.put(2, true);
+				}
+				synchronized (lock) {
+					current_printing++;
+				}
+				try {
+					//printing 
+					System.out.println("Job getting Printed at 2:" + Thread.currentThread().getPriority());
+					Thread.currentThread().sleep(5000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				synchronized (printer2) {
+					printer_busy.put(2, false);
+				}
+				synchronized (lock) {
+					current_printing--;
+					tot_printed++;
+					lock.notifyAll();
+				}
+				
+			} else {
+				//Printing done by printer 1
+				synchronized (printer3) {
+					printer_busy.put(3, true);
+				}
+				synchronized (lock) {
+					current_printing++;
+				}
+				try {
+					//printing 
+					System.out.println("Job getting Printed at 3:" + Thread.currentThread().getPriority());
+					Thread.currentThread().sleep(5000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				synchronized (printer3) {
+					printer_busy.put(3, false);
+				}
+				synchronized (lock) {
+					current_printing--;
+					tot_printed++;
+					lock.notifyAll();
+				}
+			}
+		}
+	}
+	
+	public static void main(String args[]) {
+		int temp = 0;
+		Scanner sc = new Scanner(System.in);
+		num_processes = sc.nextInt();
+		temp = num_processes;
+		AllocatePrinter allocatePrinter = new AllocatePrinter();
+		RunnablePrinter rc = allocatePrinter.new RunnablePrinter();
+		while(temp!=0) {
+			 temp--;
+			 processes.add(sc.nextInt());
+		}
+		Collections.sort(processes);
+		print_arraylist();
+		int priority = Thread.MIN_PRIORITY;
+		for(int i:processes) {
+			 Thread th = new Thread(rc);
+			 priority = (priority>=Thread.MAX_PRIORITY)?Thread.MAX_PRIORITY:priority++;
+			 th.setPriority(priority);
+			 th.setName("thread :" +i);
+			 th.start();
+		}
+		while(waiting_list!=num_processes);
+		
+			System.out.println("Notifying all the threads");
+			lock.notifyAll();
+		
+		if(tot_printed == num_processes) {
+			System.out.println("All Jobs Printed!!");
+		}
+	}
+}

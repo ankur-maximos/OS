@@ -1,0 +1,60 @@
+package com.maximos.os;
+
+public class Cook {
+
+	private int cookId;
+	private int burgerMachineTime;
+	private int friesMachineTime;
+	private int cokeTime;
+	private int foodServeTime;
+	private boolean busy;
+
+	public boolean isBusy() {
+		return busy;
+	}
+
+	public void setBusy(boolean busy) {
+		this.busy = busy;
+	}
+
+	public int getCookId() {
+		return cookId;
+	}
+
+	public void setCookId(int cookId) {
+		this.cookId = cookId;
+	}
+
+	public int getBurgerMachineTime() {
+		return burgerMachineTime;
+	}
+
+	public void setBurgerMachineTime(int burgerMachineTime) {
+		this.burgerMachineTime = burgerMachineTime;
+	}
+
+	public int getFriesMachineTime() {
+		return friesMachineTime;
+	}
+
+	public void setFriesMachineTime(int friesMachineTime) {
+		this.friesMachineTime = friesMachineTime;
+	}
+
+	public int getCokeTime() {
+		return cokeTime;
+	}
+
+	public void setCokeTime(int cokeTime) {
+		this.cokeTime = cokeTime;
+	}
+
+	public int getFoodServeTime() {
+		return foodServeTime;
+	}
+
+	public void setFoodServeTime(int foodServeTime) {
+		this.foodServeTime = foodServeTime;
+	}
+
+}

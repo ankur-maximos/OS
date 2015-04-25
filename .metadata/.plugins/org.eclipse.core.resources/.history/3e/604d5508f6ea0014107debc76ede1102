@@ -1,0 +1,317 @@
+DataSet I:
+
+10 
+4 
+2 
+20  2 1 0 
+30  4  0 1 
+31  2 1 0 
+32  2 1 0 
+33  2  0  1 
+60  2 1 0 
+70  4 0 1 
+71  2 1 0 
+72  2 2 0 
+73  2 0 1 
+Intializing Cooks..
+cook1 is ready to take orders
+cook2 is ready to take orders
+Customer 1 enters after 20 min
+Current tables 4
+Customer 2 enters after 10 min
+Customer order 1 seated on table 0 at time 20 min
+cook1 started processing order 1 at20 min
+cook1 using fries Machine for customer order 1 at 20 min
+cook1 using burger Machine for customer order 1 at 23 min
+Current tables 3
+Customer order 2 seated on table 1 at time 30 min
+Customer 3 enters after 1 min
+cook2 started processing order 2 at30 min
+cook2 using coke Machine for customer order 2 at 30 min
+Customer 4 enters after 1 min
+Current tables 2
+Customer order 3 seated on table 2 at time 31 min
+Current tables 1
+Customer order 4 seated on table 3 at time 32 min
+Customer 5 enters after 1 min
+Food served for customer 1 at33
+cook1 started processing order 4 at33 min
+cook1 using fries Machine for customer order 4 at 33 min
+Customer 6 enters after 27 min
+Current tables 0
+cook2 using burger Machine for customer order 2 at 33 min
+cook1 using burger Machine for customer order 4 at 53 min
+Food served for customer 2 at53
+cook2 started processing order 3 at51 min
+cook2 using fries Machine for customer order 3 at 51 min
+Current tables 0
+Customer 7 enters after 10 min
+Customer order 1 exit time is: 63 min
+Customer order 6 seated on table 0 at time 63 min
+Food served for customer 4 at63
+cook1 started processing order 6 at63 min
+cook1 using fries Machine for customer order 6 at 63 min
+cook2 using burger Machine for customer order 3 at 61 min
+Current tables 0
+Customer 8 enters after 1 min
+Customer 9 enters after 1 min
+Current tables 0
+Current tables 0
+Customer 10 enters after 1 min
+Current tables 0
+cook1 using burger Machine for customer order 6 at 73 min
+Food served for customer 3 at71
+Customer order 2 exit time is: 83 min
+Customer order 10 seated on table 1 at time 83 min
+cook2 started processing order 10 at83 min
+cook2 using coke Machine for customer order 10 at 83 min
+Food served for customer 6 at83
+cook2 using burger Machine for customer order 10 at 84 min
+Customer order 4 exit time is: 93 min
+Customer order 5 seated on table 3 at time 93 min
+cook1 started processing order 5 at93 min
+cook1 using coke Machine for customer order 5 at 93 min
+Food served for customer 10 at94
+cook1 using burger Machine for customer order 5 at 94 min
+Customer order 3 exit time is: 101 min
+Customer order 9 seated on table 2 at time 103 min
+cook2 started processing order 9 at103 min
+cook2 using fries Machine for customer order 9 at 103 min
+Food served for customer 5 at104
+cook2 using burger Machine for customer order 9 at 109 min
+Customer order 6 exit time is: 113 min
+Customer order 7 seated on table 0 at time 113 min
+cook1 started processing order 7 at113 min
+cook1 using coke Machine for customer order 7 at 113 min
+cook1 using burger Machine for customer order 7 at 119 min
+Food served for customer 9 at119
+Customer order 10 exit time is: 124 min
+Customer order 8 seated on table 1 at time 124 min
+cook2 started processing order 8 at124 min
+cook2 using fries Machine for customer order 8 at 124 min
+Customer order 5 exit time is: 134 min
+cook2 using burger Machine for customer order 8 at 139 min
+Food served for customer 7 at139
+Customer order 9 exit time is: 149 min
+Food served for customer 8 at149
+Customer order 7 exit time is: 169 min
+Customer order 8 exit time is: 179 min
+Restaurant Total Running time :179 min
+
+
+
+Dataset II:
+
+20 
+6 
+4 
+1   2 1 0 
+2   4  0 1 
+3   2 1 0 
+4   2 1 0 
+5   2  0  1 
+6   2 1 0 
+7   1  1 1 
+41   2 1 0 
+42   4  0 1 
+43   2 1 0 
+44   2 1 0 
+45   2  0  1 
+46   2 1 0 
+47   1  1 1 
+81   2 1 0 
+82   4  0 1 
+83   2 1 0 
+84   2 1 0 
+85   2  0  1 
+86   2 1 0 
+Intializing Cooks..
+cook1 is ready to take orders
+cook2 is ready to take orders
+cook3 is ready to take orders
+Customer 1 enters after 1 min
+cook4 is ready to take orders
+Current tables 6
+Customer 2 enters after 1 min
+Customer order 1 seated on table 0 at time 1 min
+cook1 started processing order 1 at1 min
+cook1 using fries Machine for customer order 1 at 1 min
+Current tables 5
+Customer 3 enters after 1 min
+Customer order 2 seated on table 1 at time 2 min
+cook2 started processing order 2 at2 min
+cook2 using burger Machine for customer order 2 at 2 min
+Current tables 4
+Customer 4 enters after 1 min
+Customer order 3 seated on table 2 at time 3 min
+cook3 started processing order 3 at3 min
+cook3 using fries Machine for customer order 3 at 4 min
+Current tables 3
+Customer order 4 seated on table 3 at time 4 min
+Customer 5 enters after 1 min
+cook4 started processing order 4 at4 min
+Current tables 2
+Customer 6 enters after 1 min
+Customer order 5 seated on table 4 at time 5 min
+Current tables 1
+Customer order 6 seated on table 5 at time 6 min
+Customer 7 enters after 1 min
+cook4 using fries Machine for customer order 4 at 7 min
+Customer 8 enters after 34 min
+Current tables 0
+cook2 using coke Machine for customer order 2 at 22 min
+cook3 using burger Machine for customer order 3 at 22 min
+total time for the order 2is21min
+Food served for customer 2 at23
+cook2 started processing order 6 at23 min
+cook2 using fries Machine for customer order 6 at 23 min
+cook4 using burger Machine for customer order 4 at 32 min
+total time for the order 3is29min
+Food served for customer 3 at32
+cook3 started processing order 5 at14 min
+cook3 using coke Machine for customer order 5 at 14 min
+Current tables 0
+Customer 9 enters after 1 min
+cook2 using burger Machine for customer order 6 at 42 min
+total time for the order 4is38min
+Food served for customer 4 at42
+Customer 10 enters after 1 min
+Current tables 0
+Current tables 0
+Customer 11 enters after 1 min
+Customer 12 enters after 1 min
+Current tables 0
+Current tables 0
+Customer 13 enters after 1 min
+Customer 14 enters after 1 min
+Current tables 0
+Customer 15 enters after 34 min
+Current tables 0
+total time for the order 6is29min
+Food served for customer 6 at52
+cook3 using burger Machine for customer order 5 at 34 min
+Customer order 2 exit time is: 53 min
+Customer order 14 seated on table 1 at time 53 min
+cook2 started processing order 14 at53 min
+cook2 using fries Machine for customer order 14 at 53 min
+cook2 using coke Machine for customer order 14 at 56 min
+Customer order 3 exit time is: 62 min
+Customer order 7 seated on table 2 at time 62 min
+cook4 started processing order 7 at62 min
+cook4 using fries Machine for customer order 7 at 62 min
+cook1 using burger Machine for customer order 1 at 62 min
+total time for the order 5is30min
+Food served for customer 5 at44
+cook4 using coke Machine for customer order 7 at 65 min
+Customer order 4 exit time is: 72 min
+Customer order 13 seated on table 3 at time 72 min
+cook3 started processing order 13 at72 min
+cook3 using fries Machine for customer order 13 at 72 min
+total time for the order 1is71min
+Food served for customer 1 at72
+cook4 using burger Machine for customer order 7 at 72 min
+total time for the order 7is15min
+Food served for customer 7 at77
+cook3 using burger Machine for customer order 13 at 77 min
+Customer 16 enters after 1 min
+Current tables 0
+Customer order 6 exit time is: 82 min
+Customer order 15 seated on table 5 at time 82 min
+cook1 started processing order 15 at82 min
+cook1 using fries Machine for customer order 15 at 82 min
+Current tables 0
+Customer 17 enters after 1 min
+Current tables 0
+Customer 18 enters after 1 min
+Current tables 0
+Customer 19 enters after 1 min
+Current tables 0
+Customer 20 enters after 1 min
+Current tables 0
+total time for the order 13is15min
+Food served for customer 13 at87
+cook1 using burger Machine for customer order 15 at 87 min
+Customer order 5 exit time is: 74 min
+Customer order 20 seated on table 4 at time 92 min
+cook3 started processing order 20 at92 min
+cook3 using fries Machine for customer order 20 at 92 min
+total time for the order 15is15min
+Food served for customer 15 at97
+cook2 using burger Machine for customer order 14 at 97 min
+Customer order 1 exit time is: 102 min
+Customer order 8 seated on table 0 at time 102 min
+cook1 started processing order 8 at102 min
+cook1 using fries Machine for customer order 8 at 102 min
+total time for the order 14is49min
+cook3 using burger Machine for customer order 20 at 102 min
+Food served for customer 14 at102
+Customer order 7 exit time is: 107 min
+Customer order 19 seated on table 2 at time 107 min
+cook2 started processing order 19 at107 min
+cook2 using coke Machine for customer order 19 at 107 min
+total time for the order 20is20min
+cook2 using burger Machine for customer order 19 at 112 min
+Food served for customer 20 at112
+Customer order 13 exit time is: 117 min
+Customer order 9 seated on table 3 at time 117 min
+cook3 started processing order 9 at117 min
+cook3 using coke Machine for customer order 9 at 117 min
+total time for the order 19is15min
+cook3 using burger Machine for customer order 9 at 122 min
+Food served for customer 19 at122
+Customer order 15 exit time is: 127 min
+Customer order 18 seated on table 5 at time 127 min
+cook2 started processing order 18 at127 min
+cook2 using fries Machine for customer order 18 at 127 min
+Customer order 14 exit time is: 132 min
+Customer order 10 seated on table 1 at time 132 min
+cook4 started processing order 10 at132 min
+cook4 using fries Machine for customer order 10 at 132 min
+Customer order 20 exit time is: 142 min
+Customer order 16 seated on table 4 at time 142 min
+total time for the order 9is25min
+Food served for customer 9 at142
+cook3 started processing order 16 at142 min
+cook2 using burger Machine for customer order 18 at 142 min
+cook3 using coke Machine for customer order 16 at 142 min
+Customer order 19 exit time is: 152 min
+Customer order 11 seated on table 2 at time 152 min
+cook3 using burger Machine for customer order 16 at 152 min
+total time for the order 18is25min
+Food served for customer 18 at152
+cook2 started processing order 11 at152 min
+cook2 using fries Machine for customer order 11 at 152 min
+Customer order 9 exit time is: 172 min
+Customer order 17 seated on table 3 at time 172 min
+total time for the order 16is30min
+Food served for customer 16 at172
+cook4 using burger Machine for customer order 10 at 172 min
+cook3 started processing order 17 at172 min
+cook3 using fries Machine for customer order 17 at 172 min
+Customer order 18 exit time is: 182 min
+Customer order 12 seated on table 5 at time 182 min
+total time for the order 10is50min
+Food served for customer 10 at182
+cook1 using burger Machine for customer order 8 at 182 min
+cook4 started processing order 12 at182 min
+cook4 using coke Machine for customer order 12 at 182 min
+cook2 using burger Machine for customer order 11 at 192 min
+total time for the order 8is90min
+Food served for customer 8 at192
+Customer order 16 exit time is: 202 min
+total time for the order 11is50min
+cook4 using burger Machine for customer order 12 at 202 min
+Food served for customer 11 at202
+Customer order 10 exit time is: 212 min
+total time for the order 12is30min
+cook3 using burger Machine for customer order 17 at 212 min
+Food served for customer 12 at212
+Customer order 8 exit time is: 222 min
+total time for the order 17is50min
+Food served for customer 17 at222
+Customer order 11 exit time is: 232 min
+Customer order 12 exit time is: 242 min
+Customer order 17 exit time is: 252 min
+Restaurant Total Running time :252 min
+
+

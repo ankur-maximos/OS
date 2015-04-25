@@ -1,0 +1,12 @@
+package com.maximos.os;
+
+public class Cook {
+
+	private int cookId;
+	private int burgerMachineTime;
+	private int friesMachineTime;
+	private int cokeTime;
+	private int foodServeTime;
+	
+
+}

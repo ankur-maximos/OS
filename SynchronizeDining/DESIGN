@@ -1,0 +1,22 @@
+In this Project I have tried to use most of the Java multithreading features.Some
+of them are mentioned below:
+
+1.Thread.sleep() -> in order to get the timing simulation feature.
+2.Atomic Data Structures/Data types -> I have used atomic data structures for synchronization purposes. for example, AtomicInteger,AtomicBoolean,AtomicIntegerArray
+3.wait-notifyAll -> For thread synchronization.
+4.CountDownLatch -> For avoiding busy-wait conditions and avoid consuming CPU cycles.
+
+
+Steps of application execution,
+1.Initialize all the cook threads.Make them active and wait for order threads to make them make order.
+2.Create order threads with all the attached information from user.
+3.The running threads then look for vacant seats and cooks.Here cooks are implemented using threads, while seats are implemented using Atomic array data structure.
+4.I am keeping a track for each thread via localTime variable which acts like latest timestamp.
+5.Also i am using atomic count down latches for main thread to finish execution after all diners threads have finished execution. 
+6.I have tried to make readable and also in between i have put lot of comments for better understanding of the code.
+
+
+Proof of the correct execution:
+Here I am letting the main thread also to compute the total time until which all the order threads are active.After computing that i am comparing it with last thread time.It looks like that both the values are same.So at least we can be sure that final running time looks correct.
+
+Hope it works fine!

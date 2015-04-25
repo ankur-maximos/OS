@@ -1,0 +1,19 @@
+package com.maximos.os;
+
+
+public class PlayWithTime {
+
+	public static void allAboutMainThread() {
+		System.out.println("Active threads" + Thread.activeCount());
+		System.out.println("thread name: " + Thread.currentThread().getName());
+
+	}
+
+	public static void allAboutThreadGroup() {
+
+	}
+
+	public static void main(String args[]) {
+		// System.out.println("Thread :" + Thread.);
+	}
+}
